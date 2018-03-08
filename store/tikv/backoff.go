@@ -142,12 +142,12 @@ func (t backoffType) TError() *terror.Error {
 const (
 	copBuildTaskMaxBackoff  = 5000
 	tsoMaxBackoff           = 5000
-	scannerNextMaxBackoff   = 20000
-	batchGetMaxBackoff      = 20000
-	copNextMaxBackoff       = 20000
-	getMaxBackoff           = 20000
-	prewriteMaxBackoff      = 20000
-	cleanupMaxBackoff       = 20000
+	scannerNextMaxBackoff   = 120000
+	batchGetMaxBackoff      = 120000
+	copNextMaxBackoff       = 120000
+	getMaxBackoff           = 120000
+	prewriteMaxBackoff      = 120000
+	cleanupMaxBackoff       = 120000
 	GcOneRegionMaxBackoff   = 20000
 	GcResolveLockMaxBackoff = 100000
 	GcDeleteRangeMaxBackoff = 100000
