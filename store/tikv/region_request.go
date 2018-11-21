@@ -180,6 +180,8 @@ func regionErrorToLabel(e *errorpb.Error) string {
 	} else if e.GetStoreNotMatch() != nil {
 		return "store_not_match"
 	}
+
+	log.Infof("regoin error: %v", e.GetMessage())
 	return "unknown"
 }
 
