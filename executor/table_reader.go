@@ -227,6 +227,9 @@ func (e *TableReaderExecutor) buildResp(ctx context.Context, ranges []*ranger.Ra
 	factor := e.ctx.GetSessionVars().NetworkFactor
 	totalCost := 0.0
 	for _, plan := range e.plans {
+		if plan.Stats() == nil || plan.Stats().HistColl == nil {
+			continue
+		}
 		totalCost += plan.StatsCount() * factor *
 			plan.Stats().HistColl.GetAvgRowSize(e.ctx, plan.Schema().Columns, false, true)
 	}
