@@ -395,13 +395,13 @@ func WithMatchLabels(labels []*metapb.StoreLabel) StoreSelectorOption {
 	}
 }
 
-// WithMatchZone indicates selecting stores with the matched zone label.
-func WithMatchZone() StoreSelectorOption {
+// WithMatchAZ indicates selecting stores with the matched zone label.
+func WithMatchAZ() StoreSelectorOption {
 	var storeLabels []*metapb.StoreLabel
 	serverLabels := config.GetGlobalConfig().Labels
-	if label, ok := serverLabels[config.ZoneLabelName]; ok {
+	if label, ok := serverLabels[config.LabelAZName]; ok {
 		storeLabels = []*metapb.StoreLabel{{
-			Key:   config.ZoneLabelName,
+			Key:   config.LabelAZName,
 			Value: label,
 		}}
 	}

@@ -498,4 +498,4 @@ enable-global-kill = false
 # engines means allow the tidb server read data from which types of engines. options: "tikv", "tiflash", "tidb".
 engines = ["tikv", "tiflash", "tidb"]
 [labels]
-zone = "default"
+AZ = "default"
