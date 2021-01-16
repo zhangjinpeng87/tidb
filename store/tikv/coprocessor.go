@@ -881,6 +881,7 @@ func (worker *copIteratorWorker) handleTaskOnce(bo *Backoffer, task *copTask, ch
 			networkCost += worker.req.NetworkCostEstimater(&kvRange, worker.req.KeyRanges)
 		}
 		if networkCost > float64(worker.vars.AdaptiveFollowerReadCostThreshold) {
+			logutil.Eventf(bo.ctx, "cop iterator handle task once enable adaptive local read, network cost %f", networkCost)
 			recommendLocalScan = true
 		}
 	}

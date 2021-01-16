@@ -194,7 +194,7 @@ func NewRequest(typ CmdType, pointer interface{}, ctxs ...kvrpcpb.Context) *Requ
 // NewReplicaReadRequest returns new kv rpc request with replica read.
 func NewReplicaReadRequest(typ CmdType, pointer interface{}, replicaReadType kv.ReplicaReadType, replicaReadSeed *uint32, recommendLocalScan bool, ctxs ...kvrpcpb.Context) *Request {
 	req := NewRequest(typ, pointer, ctxs...)
-	if replicaReadType == kv.ReplicaReadLeader && recommendLocalScan {
+	if replicaReadType != kv.ReplicaReadFollower && recommendLocalScan {
 		// We need to avoid the affection of forced replica read type here, so that the
 		// AZ/DC label matching could take effect.
 		replicaReadType = kv.ReplicaReadMixed
