@@ -43,8 +43,9 @@ var (
 )
 
 const (
-	scanBatchSize = 256
-	batchGetSize  = 5120
+	scanBatchSize      = 256
+	batchGetSize       = 5120
+	batchKeysThreshold = 10
 )
 
 var (
@@ -281,11 +282,14 @@ func (s *tikvSnapshot) batchGetSingleRegion(bo *Backoffer, batch batchKeys, coll
 	pending := batch.keys
 	for {
 		s.mu.RLock()
-		// TODO(patrick) set recommend local scan for this request.
+		recommendLocalRead := false
+		if len(batch.keys) > batchKeysThreshold {
+			recommendLocalRead = true
+		}
 		req := tikvrpc.NewReplicaReadRequest(tikvrpc.CmdBatchGet, &pb.BatchGetRequest{
 			Keys:    pending,
 			Version: s.version.Ver,
-		}, s.mu.replicaRead, &s.replicaReadSeed, false, pb.Context{
+		}, s.mu.replicaRead, &s.replicaReadSeed, recommendLocalRead, pb.Context{
 			Priority:     s.priority,
 			NotFillCache: s.notFillCache,
 			TaskId:       s.mu.taskID,

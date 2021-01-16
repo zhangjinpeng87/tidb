@@ -638,7 +638,7 @@ var defaultSysVars = []*SysVar{
 	{Scope: ScopeGlobal | ScopeSession, Name: TiDBMemQuotaApplyCache, Value: strconv.Itoa(DefTiDBMemQuotaApplyCache)},
 	{Scope: ScopeGlobal | ScopeSession, Name: TiDBBackoffLockFast, Value: strconv.Itoa(kv.DefBackoffLockFast), Type: TypeUnsigned, MinValue: 1, MaxValue: math.MaxUint64},
 	{Scope: ScopeGlobal | ScopeSession, Name: TiDBBackOffWeight, Value: strconv.Itoa(kv.DefBackOffWeight), Type: TypeUnsigned, MinValue: 1, MaxValue: math.MaxUint64},
-	{Scope: ScopeGlobal | ScopeSession, Name: TiDBAdaptiveFollowerReadThreshold, Value: strconv.Itoa(kv.DefAdaptiveFollowerReadCostThreshold), Type: TypeUnsigned, MinValue: 1, MaxValue: math.MaxUint64}
+	{Scope: ScopeGlobal | ScopeSession, Name: TiDBAdaptiveFollowerReadThreshold, Value: strconv.Itoa(kv.DefAdaptiveFollowerReadThreshold), Type: TypeUnsigned, MinValue: 1, MaxValue: math.MaxUint64},
 	{Scope: ScopeGlobal | ScopeSession, Name: TiDBRetryLimit, Value: strconv.Itoa(DefTiDBRetryLimit), Type: TypeInt, MinValue: -1, MaxValue: math.MaxInt64},
 	{Scope: ScopeGlobal | ScopeSession, Name: TiDBDisableTxnAutoRetry, Value: BoolToOnOff(DefTiDBDisableTxnAutoRetry), Type: TypeBool},
 	{Scope: ScopeGlobal | ScopeSession, Name: TiDBConstraintCheckInPlace, Value: BoolToOnOff(DefTiDBConstraintCheckInPlace), Type: TypeBool},
