@@ -23,6 +23,7 @@ import (
 	"github.com/pingcap/errors"
 	"github.com/pingcap/failpoint"
 	pb "github.com/pingcap/kvproto/pkg/kvrpcpb"
+	"github.com/pingcap/kvproto/pkg/metapb"
 	"github.com/pingcap/tidb/config"
 	"github.com/pingcap/tidb/metrics"
 	"github.com/pingcap/tidb/store/tikv/tikvrpc"
@@ -87,6 +88,16 @@ func (c *twoPhaseCommitter) buildPrewriteRequest(batch batchMutations, txnSize u
 		})
 	}
 
+	var storeLabel *metapb.StoreLabel
+	if AZValue, ok := config.GetGlobalConfig().Labels[config.LabelAZName]; ok {
+		storeLabel = &metapb.StoreLabel{
+			Key: config.LabelAZName,
+			Value: AZValue,
+		}
+	} else {
+		storeLabel = nil
+	}
+
 	req := &pb.PrewriteRequest{
 		Mutations:         mutations,
 		PrimaryLock:       c.primary(),
@@ -97,6 +108,7 @@ func (c *twoPhaseCommitter) buildPrewriteRequest(batch batchMutations, txnSize u
 		TxnSize:           txnSize,
 		MinCommitTs:       minCommitTS,
 		MaxCommitTs:       c.maxCommitTS,
+		RequestLabel:	   storeLabel,
 	}
 
 	failpoint.Inject("invalidMaxCommitTS", func() {
