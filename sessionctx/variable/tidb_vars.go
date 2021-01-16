@@ -345,6 +345,9 @@ const (
 	// Only positive integers can be accepted, which means that the maximum back off time can only grow.
 	TiDBBackOffWeight = "tidb_backoff_weight"
 
+	// tidb_adaptive_follower_read_threshold is used to determinate whether a scan request should adaptively read local follower.
+	TiDBAdaptiveFollowerReadThreshold = "tidb_adaptive_follower_read_threshold"
+
 	// tidb_ddl_reorg_worker_cnt defines the count of ddl reorg workers.
 	TiDBDDLReorgWorkerCount = "tidb_ddl_reorg_worker_cnt"
 

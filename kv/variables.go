@@ -27,14 +27,18 @@ type Variables struct {
 	// Pointer to SessionVars.Killed
 	// Killed is a flag to indicate that this query is killed.
 	Killed *uint32
+
+	// AdaptiveFollowerReadCostThreshold specifies the threshold of adpative follower local scan.
+	AdaptiveFollowerReadCostThreshold int
 }
 
 // NewVariables create a new Variables instance with default values.
 func NewVariables(killed *uint32) *Variables {
 	return &Variables{
-		BackoffLockFast: DefBackoffLockFast,
-		BackOffWeight:   DefBackOffWeight,
-		Killed:          killed,
+		BackoffLockFast:                   DefBackoffLockFast,
+		BackOffWeight:                     DefBackOffWeight,
+		Killed:                            killed,
+		AdaptiveFollowerReadCostThreshold: DefAdaptiveFollowerReadThreshold,
 	}
 }
 
@@ -45,6 +49,7 @@ var DefaultVars = NewVariables(&ignoreKill)
 
 // Default values
 const (
-	DefBackoffLockFast = 100
-	DefBackOffWeight   = 2
+	DefAdaptiveFollowerReadThreshold = 4096
+	DefBackoffLockFast               = 100
+	DefBackOffWeight                 = 2
 )

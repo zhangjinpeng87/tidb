@@ -2403,6 +2403,7 @@ var builtinGlobalVariable = []string{
 	variable.TiDBExecutorConcurrency,
 	variable.TiDBBackoffLockFast,
 	variable.TiDBBackOffWeight,
+	variable.TiDBAdaptiveFollowerReadThreshold,
 	variable.TiDBConstraintCheckInPlace,
 	variable.TiDBDDLReorgWorkerCount,
 	variable.TiDBDDLReorgBatchSize,
