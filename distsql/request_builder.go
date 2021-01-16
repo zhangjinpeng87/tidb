@@ -243,9 +243,9 @@ func (builder *RequestBuilder) SetStreaming(streaming bool) *RequestBuilder {
 	return builder
 }
 
-// SetRecommendLocalScan sets "RecommendLocalScan" flag for "kv.Request".
-func (builder *RequestBuilder) SetRecommendLocalScan(recommendLocalScan bool) *RequestBuilder {
-	builder.Request.RecommendLocalScan = recommendLocalScan
+// SetNetworkCostEstimater sets "NetworkCostEstimater" flag for "kv.Request".
+func (builder *RequestBuilder) SetNetworkCostEstimater(estimator func(*kv.KeyRange, []kv.KeyRange) float64) *RequestBuilder {
+	builder.Request.NetworkCostEstimater = estimator
 	return builder
 }
 

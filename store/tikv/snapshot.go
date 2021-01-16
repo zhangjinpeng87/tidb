@@ -281,10 +281,11 @@ func (s *tikvSnapshot) batchGetSingleRegion(bo *Backoffer, batch batchKeys, coll
 	pending := batch.keys
 	for {
 		s.mu.RLock()
+		// TODO(patrick) set recommend local scan for this request.
 		req := tikvrpc.NewReplicaReadRequest(tikvrpc.CmdBatchGet, &pb.BatchGetRequest{
 			Keys:    pending,
 			Version: s.version.Ver,
-		}, s.mu.replicaRead, &s.replicaReadSeed, pb.Context{
+		}, s.mu.replicaRead, &s.replicaReadSeed, false, pb.Context{
 			Priority:     s.priority,
 			NotFillCache: s.notFillCache,
 			TaskId:       s.mu.taskID,
@@ -429,7 +430,7 @@ func (s *tikvSnapshot) get(ctx context.Context, bo *Backoffer, k kv.Key) ([]byte
 		&pb.GetRequest{
 			Key:     k,
 			Version: s.version.Ver,
-		}, s.mu.replicaRead, &s.replicaReadSeed, pb.Context{
+		}, s.mu.replicaRead, &s.replicaReadSeed, false, pb.Context{
 			Priority:     s.priority,
 			NotFillCache: s.notFillCache,
 			TaskId:       s.mu.taskID,
