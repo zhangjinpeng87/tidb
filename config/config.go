@@ -42,6 +42,7 @@ import (
 
 // Config number limitations
 const (
+	LabelAZName    = "AZ"
 	MaxLogFileSize = 4096 // MB
 	// DefTxnEntrySizeLimit is the default value of TxnEntrySizeLimit.
 	DefTxnEntrySizeLimit = 6 * 1024 * 1024
