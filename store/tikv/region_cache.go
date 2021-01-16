@@ -395,6 +395,19 @@ func WithMatchLabels(labels []*metapb.StoreLabel) StoreSelectorOption {
 	}
 }
 
+// WithMatchZone indicates selecting stores with the matched zone label.
+func WithMatchZone() StoreSelectorOption {
+	var storeLabels []*metapb.StoreLabel
+	serverLabels := config.GetGlobalConfig().Labels
+	if label, ok := serverLabels[config.ZoneLabelName]; ok {
+		storeLabels = []*metapb.StoreLabel{{
+			Key:   config.ZoneLabelName,
+			Value: label,
+		}}
+	}
+	return WithMatchLabels(storeLabels)
+}
+
 // GetTiKVRPCContext returns RPCContext for a region. If it returns nil, the region
 // must be out of date and already dropped from cache.
 func (c *RegionCache) GetTiKVRPCContext(bo *Backoffer, id RegionVerID, replicaRead kv.ReplicaReadType, followerStoreSeed uint32, opts ...StoreSelectorOption) (*RPCContext, error) {
