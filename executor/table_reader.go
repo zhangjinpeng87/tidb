@@ -36,10 +36,6 @@ import (
 	"github.com/pingcap/tipb/go-tipb"
 )
 
-// CostThreshold marks the cost threshold to determine whether given request is
-// a large scan request.
-const CostThreshold = 100000000.0
-
 // make sure `TableReaderExecutor` implements `Executor`.
 var _ Executor = &TableReaderExecutor{}
 
@@ -228,9 +224,14 @@ func (e *TableReaderExecutor) buildResp(ctx context.Context, ranges []*ranger.Ra
 		reqBuilder = builder.SetHandleRanges(e.ctx.GetSessionVars().StmtCtx, getPhysicalTableID(e.table), e.table.Meta() != nil && e.table.Meta().IsCommonHandle, ranges, e.feedback)
 	}
 
-	totalCst := 0.0
+	factor := e.ctx.GetSessionVars().NetworkFactor
+	totalCost := 0.0
 	for _, plan := range e.plans {
-		totalCst += plan.StatsCount()
+		totalCost += plan.StatsCount()*factor +
+			plan.Stats().HistColl.GetAvgRowSize(e.ctx, plan.Schema().Columns, false, true)
+	}
+	estimater := func(r *kv.KeyRange, totalRanges []kv.KeyRange) float64 {
+		return totalCost * 1.0 / (float64(len(totalRanges)) + 1.0)
 	}
 
 	kvReq, err := reqBuilder.
@@ -244,7 +245,7 @@ func (e *TableReaderExecutor) buildResp(ctx context.Context, ranges []*ranger.Ra
 		SetStoreType(e.storeType).
 		SetAllowBatchCop(e.batchCop).
 		SetFromInfoSchema(infoschema.GetInfoSchema(e.ctx)).
-		SetRecommendLocalScan(totalCst >= CostThreshold). // TODO: need to replace with real cost, this is just row count
+		SetNetworkCostEstimater(estimater).
 		Build()
 	if err != nil {
 		return nil, err

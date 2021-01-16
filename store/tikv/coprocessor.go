@@ -45,6 +45,10 @@ import (
 	"go.uber.org/zap"
 )
 
+// CostThreshold marks the cost threshold to determine whether given request is
+// a large scan request.
+const CostThreshold = 64 * 1024 // 64KB
+
 var (
 	tikvTxnRegionsNumHistogramWithCoprocessor      = metrics.TiKVTxnRegionsNumHistogram.WithLabelValues("coprocessor")
 	tikvTxnRegionsNumHistogramWithBatchCoprocessor = metrics.TiKVTxnRegionsNumHistogram.WithLabelValues("batch_coprocessor")
@@ -870,8 +874,23 @@ func (worker *copIteratorWorker) handleTaskOnce(bo *Backoffer, task *copTask, ch
 		}
 	}
 
+	recommendLocalScan := false
+	if worker.req.NetworkCostEstimater != nil {
+		networkCost := 0.0
+		for _, r := range copReq.Ranges {
+			kvRange := kv.KeyRange{
+				StartKey: r.Start,
+				EndKey:   r.End,
+			}
+			networkCost += worker.req.NetworkCostEstimater(&kvRange, worker.req.KeyRanges)
+		}
+		if networkCost > float64(CostThreshold) {
+			recommendLocalScan = true
+		}
+	}
+
 	req := tikvrpc.NewReplicaReadRequest(task.cmdType, &copReq, worker.req.ReplicaRead,
-		&worker.replicaReadSeed, worker.req.RecommendLocalScan,
+		&worker.replicaReadSeed, recommendLocalScan,
 		kvrpcpb.Context{
 			IsolationLevel: pbIsolationLevel(worker.req.IsolationLevel),
 			Priority:       kvPriorityToCommandPri(worker.req.Priority),
@@ -879,7 +898,7 @@ func (worker *copIteratorWorker) handleTaskOnce(bo *Backoffer, task *copTask, ch
 			RecordTimeStat: true,
 			RecordScanStat: true,
 			TaskId:         worker.req.TaskID,
-	})
+		})
 	req.StoreTp = task.storeType
 	startTime := time.Now()
 	if worker.Stats == nil {
