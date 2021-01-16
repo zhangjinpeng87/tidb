@@ -111,7 +111,7 @@ func (s *testRegionRequestToThreeStoresSuite) TestGetRPCContext(c *C) {
 	var seed uint32 = 0
 	var regionID = RegionVerID{s.regionID, 0, 0}
 
-	req := tikvrpc.NewReplicaReadRequest(tikvrpc.CmdGet, &kvrpcpb.GetRequest{}, kv.ReplicaReadLeader, &seed)
+	req := tikvrpc.NewReplicaReadRequest(tikvrpc.CmdGet, &kvrpcpb.GetRequest{}, kv.ReplicaReadLeader, &seed, false)
 	rpcCtx, err := s.regionRequestSender.getRPCContext(s.bo, req, regionID, kv.TiKV)
 	c.Assert(err, IsNil)
 	c.Assert(rpcCtx.Peer.Id, Equals, s.leaderPeer)

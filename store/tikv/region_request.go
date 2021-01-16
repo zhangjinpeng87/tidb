@@ -234,7 +234,7 @@ func (s *RegionRequestSender) getRPCContext(
 		if req.RecommendLocalScan {
 			// We need to avoid the affection of forced replica read type here, so that the
 			// AZ/DC label matching could take effect.
-			return s.regionCache.GetTiKVRPCContext(bo, regionID, kv.ReplicaReadMixed, seed, WithMatchAZ())
+			return s.regionCache.GetTiKVRPCContext(bo, regionID, req.ReplicaReadType, seed, WithMatchAZ())
 		} else {
 			return s.regionCache.GetTiKVRPCContext(bo, regionID, req.ReplicaReadType, seed)
 		}
