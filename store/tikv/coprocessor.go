@@ -45,10 +45,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// CostThreshold marks the cost threshold to determine whether given request is
-// a large scan request.
-const CostThreshold = 64 * 1024 // 64KB
-
 var (
 	tikvTxnRegionsNumHistogramWithCoprocessor      = metrics.TiKVTxnRegionsNumHistogram.WithLabelValues("coprocessor")
 	tikvTxnRegionsNumHistogramWithBatchCoprocessor = metrics.TiKVTxnRegionsNumHistogram.WithLabelValues("batch_coprocessor")
@@ -884,7 +880,7 @@ func (worker *copIteratorWorker) handleTaskOnce(bo *Backoffer, task *copTask, ch
 			}
 			networkCost += worker.req.NetworkCostEstimater(&kvRange, worker.req.KeyRanges)
 		}
-		if networkCost > float64(CostThreshold) {
+		if networkCost > float64(worker.vars.AdaptiveFollowerReadCostThreshold) {
 			recommendLocalScan = true
 		}
 	}
