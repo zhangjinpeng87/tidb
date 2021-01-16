@@ -234,6 +234,7 @@ func (s *RegionRequestSender) getRPCContext(
 		if req.RecommendLocalScan {
 			// We need to avoid the affection of forced replica read type here, so that the
 			// AZ/DC label matching could take effect.
+			logutil.Eventf(bo.ctx, "region request sender gen ctx for region %d with matched az", regionID.GetID())
 			return s.regionCache.GetTiKVRPCContext(bo, regionID, req.ReplicaReadType, seed, WithMatchAZ())
 		} else {
 			return s.regionCache.GetTiKVRPCContext(bo, regionID, req.ReplicaReadType, seed)

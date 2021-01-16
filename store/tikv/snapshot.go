@@ -284,6 +284,7 @@ func (s *tikvSnapshot) batchGetSingleRegion(bo *Backoffer, batch batchKeys, coll
 		s.mu.RLock()
 		recommendLocalRead := false
 		if len(batch.keys) > batchKeysThreshold {
+			logutil.Eventf(bo.ctx, "batch get signal region enable adaptive local read, batch keys %d, replica read %d", len(batch.keys), s.mu.replicaRead)
 			recommendLocalRead = true
 		}
 		req := tikvrpc.NewReplicaReadRequest(tikvrpc.CmdBatchGet, &pb.BatchGetRequest{

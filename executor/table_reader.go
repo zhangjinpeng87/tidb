@@ -231,8 +231,7 @@ func (e *TableReaderExecutor) buildResp(ctx context.Context, ranges []*ranger.Ra
 			plan.Stats().HistColl.GetAvgRowSize(e.ctx, plan.Schema().Columns, false, true)
 	}
 
-	logutil.Eventf(ctx, "table scan %s, total cost: %d",
-		e.table.Meta().Name.L, totalCost)
+	logutil.Eventf(ctx, "table scan table: %s, total estimates cost: %f", e.table.Meta().Name.L, totalCost)
 	estimater := func(r *kv.KeyRange, totalRanges []kv.KeyRange) float64 {
 		return totalCost * 1.0 / (float64(len(totalRanges)) + 1.0)
 	}
