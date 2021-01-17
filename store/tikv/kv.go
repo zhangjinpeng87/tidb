@@ -167,6 +167,7 @@ type tikvStore struct {
 
 	replicaReadSeed uint32        // this is used to load balance followers / learners when replica read is enabled
 	memCache        kv.MemManager // this is used to query from memory
+	isBusy		 bool				  // a store is busy based on cop response
 }
 
 func (s *tikvStore) UpdateSPCache(cachedSP uint64, cachedTime time.Time) {
@@ -215,6 +216,7 @@ func newTikvStore(uuid string, pdClient pd.Client, spkv SafePointKV, client Clie
 		closed:          make(chan struct{}),
 		replicaReadSeed: fastrand.Uint32(),
 		memCache:        kv.NewCacheDB(),
+		isBusy: 		 false,
 	}
 	store.lockResolver = newLockResolver(store)
 	store.enableGC = enableGC
@@ -520,6 +522,14 @@ func (s *tikvStore) GetTiKVClient() (client Client) {
 
 func (s *tikvStore) GetMemCache() kv.MemManager {
 	return s.memCache
+}
+
+func (s *tikvStore) SetServerBusy(isBusy bool) {
+	s.isBusy = isBusy
+}
+
+func (s *tikvStore) GetServerBusy() bool {
+	return s.isBusy
 }
 
 func init() {

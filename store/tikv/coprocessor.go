@@ -880,7 +880,8 @@ func (worker *copIteratorWorker) handleTaskOnce(bo *Backoffer, task *copTask, ch
 			}
 			networkCost += worker.req.NetworkCostEstimater(&kvRange, worker.req.KeyRanges)
 		}
-		if networkCost > float64(worker.vars.AdaptiveFollowerReadCostThreshold) {
+		// Consider both the network cost and the close tikv server load
+		if networkCost > float64(worker.vars.AdaptiveFollowerReadCostThreshold) && !worker.store.isBusy {
 			logutil.Eventf(bo.ctx, "cop iterator handle task once enable adaptive local read, network cost %f", networkCost)
 			recommendLocalScan = true
 		}
@@ -1034,6 +1035,11 @@ func (worker *copIteratorWorker) logTimeCopTask(costTime time.Duration, task *co
 		default:
 			panic("unreachable")
 		}
+	}
+
+	// An indicator for a busy store
+	if detail != nil {
+		worker.store.SetServerBusy(detail.ServerBusy)
 	}
 
 	var timeDetail *kvrpcpb.TimeDetail
